@@ -1,0 +1,22 @@
+#!/bin/bash
+declare -i n=0
+echo "<html>" > music.html
+file="/var/www/php/wget/douban.txt"
+cat douban.txt | grep rawUrl | sed -n 's/name\"\:\"/\n/pg' | awk -F\" '{print $1}' | grep -v song_record   >  douban.music
+#sed -i '/^$/d' douban.music > /dev/null
+sed  -n 's/rawUrl\"\:\"/\n/pg' douban.txt  | awk -F\" '{print $1}' | grep  http  > douban.url
+for url  in `cat /var/www/php/wget/douban.url`
+do 
+#wget $url  -O $n.mp3
+((n++))
+done
+n=0
+while read name
+do
+name=${name// /_}
+mv $n.mp3  $name.mp3 > /dev/null 
+echo  $name.mp3 >> music.html
+echo "<br>" >> music.html
+((n++))
+done   < douban.music
+echo "</html>" >> music.html
